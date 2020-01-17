@@ -10,10 +10,11 @@ fi
 function fileChange ()
 {
 	# ----- Parameters ----
-	# 1 target directory
-	# 2 tree logs directory
+	# 1 tree logs directory
+	# 2 target directory
 	# 3 file system label
 
+	# remove "/" from end of tree logs directory. "/" will be added later
 	if [[ ${1:(-1)} == "/" ]]; then
 		treeLogs="${1:0:(-1)}"
 	else
@@ -21,13 +22,14 @@ function fileChange ()
 	fi
 	target="$2"
 	fsLabel="$3"
-	echo "|$target| |$treeLogs| |$fsLabel|"
+	# echo "|$target| |$treeLogs| |$fsLabel|"
 	cd "$target"
 	if [[ $? -ne 0 ]]; then
 		exit 1
 	fi
 	tree . > "$treeLogs"/tree_"$fsLabel"_"$today".txt
 	cd "$treeLogs"
+	# Find the last changed & 2nd last changed treeLog files for given file system. 
 	treeNew=`ls -lt ./tree_"$fsLabel"_* | awk '{if(NR == 1) print $9}'`
 	treeOld=`ls -lt ./tree_"$fsLabel"_* | awk '{if(NR == 2) print $9}'`
 	if [[ $treeOld == '' ]]; then
